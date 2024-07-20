@@ -1,0 +1,58 @@
+Name: usercenter-api
+Host: 0.0.0.0
+Port: 1004
+Mode: dev
+
+#jwtAuth
+JwtAuth:
+  AccessSecret: ae0536f9-6450-4606-8e13-5a19ed505da0
+
+#监控
+Prometheus:
+  Host: 0.0.0.0
+  Port: 4008
+  Path: /metrics
+
+#链路追踪
+Telemetry:
+  Name: usercenter-api
+  Endpoint: http://jaeger:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+
+Log:
+  ServiceName: usercenter-api
+  Mode: console
+  Level: error
+  Encoding: plain
+
+#WxMiniConf
+WxMiniConf:
+  AppId: wx0fe80d42b0d37cc8
+  Secret: 495f7df09f227dde93f57f875a8f0e9f
+
+#rpc service
+UsercenterRpcConf:
+  Endpoints:
+    - 127.0.0.1:2004
+  NonBlock: true
+
+LotteryRpcConf:
+  Endpoints:
+    - 127.0.0.1:2005
+  NonBlock: true
+
+CheckinRpcConf:
+  Endpoints:
+    - 127.0.0.1:2007
+  NonBlock: true
+
+CommentRpcConf:
+  Endpoints:
+    - 127.0.0.1:2009
+  NonBlock: true
+
+FileUploadRpcConf:
+  Endpoints:
+    - 127.0.0.1:2008
+  NonBlock: true

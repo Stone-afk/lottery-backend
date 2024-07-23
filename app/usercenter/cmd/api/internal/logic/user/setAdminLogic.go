@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"looklook/app/usercenter/cmd/rpc/usercenter"
 
 	"looklook/app/usercenter/cmd/api/internal/svc"
 	"looklook/app/usercenter/cmd/api/internal/types"
@@ -24,7 +25,11 @@ func NewSetAdminLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SetAdmin
 }
 
 func (l *SetAdminLogic) SetAdmin(req *types.SetAdminReq) (resp *types.SetAdminResp, err error) {
-	// todo: add your logic here and delete this line
-
+	_, err = l.svcCtx.UsercenterRpc.SetAdmin(l.ctx, &usercenter.SetAdminReq{
+		UserId: req.Id,
+	})
+	if err != nil {
+		return nil, err
+	}
 	return
 }

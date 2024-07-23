@@ -2,6 +2,9 @@ package userSponsor
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	"looklook/app/usercenter/cmd/rpc/pb"
+	"looklook/common/xerr"
 
 	"looklook/app/usercenter/cmd/api/internal/svc"
 	"looklook/app/usercenter/cmd/api/internal/types"
@@ -24,7 +27,11 @@ func NewSponsorDelLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sponso
 }
 
 func (l *SponsorDelLogic) SponsorDel(req *types.SponsorDelReq) (resp *types.SponsorDelResp, err error) {
-	// todo: add your logic here and delete this line
-
+	_, err = l.svcCtx.UsercenterRpc.DelUserSponsor(l.ctx, &pb.DelUserSponsorReq{
+		Id: req.Id,
+	})
+	if err != nil {
+		return nil, errors.Wrapf(xerr.NewErrMsg("SponsorDel fail"), "SponsorDel fail req: %+v , err : %v ", req, err)
+	}
 	return
 }

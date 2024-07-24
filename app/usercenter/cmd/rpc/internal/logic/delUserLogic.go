@@ -2,7 +2,9 @@ package logic
 
 import (
 	"context"
+	"github.com/pkg/errors"
 	"looklook/app/usercenter/cmd/rpc/pb"
+	"looklook/common/xerr"
 
 	"looklook/app/usercenter/cmd/rpc/internal/svc"
 
@@ -24,7 +26,13 @@ func NewDelUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DelUserLo
 }
 
 func (l *DelUserLogic) DelUser(in *pb.DelUserReq) (*pb.DelUserResp, error) {
-	// todo: add your logic here and delete this line
-
+	logx.Error("%v", in)
+	if in.Id == 0 {
+		return nil, errors.New("用户ID不能为空")
+	}
+	err := l.svcCtx.UserModel.Delete(l.ctx, in.Id)
+	if err != nil {
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "db user Delete err:%v, id:%+v", err, in.Id)
+	}
 	return &pb.DelUserResp{}, nil
 }

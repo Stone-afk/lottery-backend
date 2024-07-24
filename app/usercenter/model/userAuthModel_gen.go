@@ -32,7 +32,7 @@ var (
 
 type (
 	userAuthModel interface {
-		Insert(ctx context.Context, data *UserAuth) (sql.Result, error)
+		Insert(ctx context.Context, session sqlx.Session, data *UserAuth) (sql.Result, error)
 		TransInsert(ctx context.Context, session sqlx.Session, data *UserAuth) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*UserAuth, error)
 		FindOneByAuthTypeAuthKey(ctx context.Context, authType string, authKey string) (*UserAuth, error)

@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"looklook/app/usercenter/cmd/rpc/pb"
 
 	"looklook/app/usercenter/cmd/rpc/internal/svc"
 

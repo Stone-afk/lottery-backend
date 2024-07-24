@@ -2,8 +2,10 @@ package logic
 
 import (
 	"context"
+	"github.com/pkg/errors"
 	"looklook/app/usercenter/cmd/rpc/internal/svc"
 	"looklook/app/usercenter/cmd/rpc/pb"
+	"looklook/common/xerr"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -23,7 +25,17 @@ func NewCheckIsAdminLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Chec
 }
 
 func (l *CheckIsAdminLogic) CheckIsAdmin(in *pb.CheckIsAdminReq) (*pb.CheckIsAdminResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.CheckIsAdminResp{}, nil
+	user, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	if err != nil {
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "db user FindOne err:%v, id:%+v", err, in.UserId)
+	}
+	var isAdmin bool
+	if user.IsAdmin == 1 {
+		isAdmin = true
+	} else {
+		isAdmin = false
+	}
+	return &pb.CheckIsAdminResp{
+		IsAdmin: isAdmin,
+	}, nil
 }

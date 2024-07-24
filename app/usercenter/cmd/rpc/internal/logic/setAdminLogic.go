@@ -2,6 +2,8 @@ package logic
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	"looklook/app/usercenter/cmd/rpc/pb"
 
 	"looklook/app/usercenter/cmd/rpc/internal/svc"
 
@@ -23,7 +25,9 @@ func NewSetAdminLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SetAdmin
 }
 
 func (l *SetAdminLogic) SetAdmin(in *pb.SetAdminReq) (*pb.SetAdminResp, error) {
-	// todo: add your logic here and delete this line
-
+	err := l.svcCtx.UserModel.SetAdmin(l.ctx, in.UserId)
+	if err != nil {
+		return nil, errors.Wrapf(err, "req: %+v", in)
+	}
 	return &pb.SetAdminResp{}, nil
 }

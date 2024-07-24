@@ -2,7 +2,12 @@ package logic
 
 import (
 	"context"
+	"github.com/jinzhu/copier"
+	"github.com/pkg/errors"
 	"looklook/app/usercenter/cmd/rpc/pb"
+	"looklook/app/usercenter/cmd/rpc/usercenter"
+	"looklook/app/usercenter/model"
+	"looklook/common/xerr"
 
 	"looklook/app/usercenter/cmd/rpc/internal/svc"
 
@@ -24,7 +29,15 @@ func NewGetUserAuthByAuthKeyLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *GetUserAuthByAuthKeyLogic) GetUserAuthByAuthKey(in *pb.GetUserAuthByAuthKeyReq) (*pb.GetUserAuthByAuthKeyResp, error) {
-	// todo: add your logic here and delete this line
+	userAuth, err := l.svcCtx.UserAuthModel.FindOneByAuthTypeAuthKey(l.ctx, in.AuthType, in.AuthKey)
+	if err != nil && err != model.ErrNotFound {
+		return nil, errors.Wrapf(xerr.NewErrMsg("get user auth  fail"), "err : %v , in : %+v", err, in)
+	}
 
-	return &pb.GetUserAuthByAuthKeyResp{}, nil
+	var respUserAuth usercenter.UserAuth
+	_ = copier.Copy(&respUserAuth, userAuth)
+
+	return &pb.GetUserAuthByAuthKeyResp{
+		UserAuth: &respUserAuth,
+	}, nil
 }

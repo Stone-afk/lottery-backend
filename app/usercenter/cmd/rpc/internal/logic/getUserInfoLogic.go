@@ -2,11 +2,19 @@ package logic
 
 import (
 	"context"
+	"github.com/jinzhu/copier"
+	"github.com/pkg/errors"
+	"looklook/app/usercenter/cmd/rpc/pb"
+	"looklook/app/usercenter/cmd/rpc/usercenter"
+	"looklook/app/usercenter/model"
+	"looklook/common/xerr"
 
 	"looklook/app/usercenter/cmd/rpc/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
+
+var ErrUserNoExistsError = xerr.NewErrMsg("用户不存在")
 
 type GetUserInfoLogic struct {
 	ctx    context.Context
@@ -23,7 +31,17 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 func (l *GetUserInfoLogic) GetUserInfo(in *pb.GetUserInfoReq) (*pb.GetUserInfoResp, error) {
-	// todo: add your logic here and delete this line
+	user, err := l.svcCtx.UserModel.FindOne(l.ctx, in.Id)
+	if err != nil && err != model.ErrNotFound {
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "GetUserInfo find user db err , id:%d , err:%v", in.Id, err)
+	}
+	if user == nil {
+		return nil, errors.Wrapf(ErrUserNoExistsError, "id:%d", in.Id)
+	}
+	var respUser usercenter.User
+	_ = copier.Copy(&respUser, user)
 
-	return &pb.GetUserInfoResp{}, nil
+	return &usercenter.GetUserInfoResp{
+		User: &respUser,
+	}, nil
 }

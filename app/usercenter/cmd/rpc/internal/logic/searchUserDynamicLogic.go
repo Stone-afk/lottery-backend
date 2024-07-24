@@ -2,6 +2,9 @@ package logic
 
 import (
 	"context"
+	"github.com/jinzhu/copier"
+	"looklook/app/usercenter/cmd/rpc/pb"
+	"looklook/app/usercenter/model"
 
 	"looklook/app/usercenter/cmd/rpc/internal/svc"
 
@@ -23,7 +26,21 @@ func NewSearchUserDynamicLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *SearchUserDynamicLogic) SearchUserDynamic(in *pb.SearchUserDynamicReq) (*pb.SearchUserDynamicResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.SearchUserDynamicResp{}, nil
+	list, err := l.svcCtx.UserDynamicModel.FindListByUserId(l.ctx, in.UserId)
+	if err != nil && err != model.ErrNotFound {
+		return nil, err
+	}
+	var resp []*pb.UserDynamic
+	if len(list) > 0 {
+		for _, dynamic := range list {
+			var pbDynamic pb.UserDynamic
+			logx.Error("dynamic:", dynamic)
+			_ = copier.Copy(&pbDynamic, dynamic)
+			pbDynamic.UpdateTime = dynamic.UpdateTime.Unix()
+			resp = append(resp, &pbDynamic)
+		}
+	}
+	return &pb.SearchUserDynamicResp{
+		UserDynamic: resp,
+	}, nil
 }

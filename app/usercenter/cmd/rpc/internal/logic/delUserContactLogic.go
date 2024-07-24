@@ -2,9 +2,11 @@ package logic
 
 import (
 	"context"
+	"github.com/pkg/errors"
 	"github.com/zeromicro/go-zero/core/logx"
 	"looklook/app/usercenter/cmd/rpc/internal/svc"
 	"looklook/app/usercenter/cmd/rpc/pb"
+	"looklook/common/xerr"
 )
 
 type DelUserContactLogic struct {
@@ -22,7 +24,11 @@ func NewDelUserContactLogic(ctx context.Context, svcCtx *svc.ServiceContext) *De
 }
 
 func (l *DelUserContactLogic) DelUserContact(in *pb.DelUserContactReq) (*pb.DelUserContactResp, error) {
-	// todo: add your logic here and delete this line
-
+	for _, id := range in.Id {
+		err := l.svcCtx.UserContactModel.Delete(l.ctx, id)
+		if err != nil {
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "db user_contact Delete err:%v, id:%+v", err, in.Id)
+		}
+	}
 	return &pb.DelUserContactResp{}, nil
 }

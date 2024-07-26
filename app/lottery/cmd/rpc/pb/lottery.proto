@@ -1,0 +1,522 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package pb;
+
+// ------------------------------------
+// Messages
+// ------------------------------------
+
+//--------------------------------抽奖表--------------------------------
+message Lottery {
+  int64 id = 1; //id
+  int64 userId = 2;
+  string name = 3;
+  string thumb = 4;
+  int64 publishTime = 5;
+  int64 joinNumber = 6;
+  string introduce = 7;
+  int64 awardDeadline = 8;
+  int64 isSelected = 9;
+  int64 announceType = 10;
+  int64 announceTime = 11;
+  int64 isAnnounced = 12;
+  int64 createTime = 13;
+  int64 updateTime = 14;
+  int64 SponsorId = 15;
+}
+
+message AddLotteryReq {
+  int64 userId = 1; //发起抽奖用户ID
+  string name = 2; //默认取一等奖名称
+  string thumb = 3; //默认取一等经配图
+  int64 joinNumber = 4;
+  string introduce = 5;
+  int64 awardDeadline = 6;
+  int64 announceType = 8;
+  repeated Prize prizes = 9; //奖品 支持多个
+  int64 announceTime = 10;
+  int64 SponsorId = 11;
+  int64 isClocked = 12; // 是否开启打卡任务
+  ClockTask clockTask = 13; // 打卡任务 最多支持一个
+  int64 publishType = 14; // 发布类型 1发布测试 2发布正式
+}
+
+message AddLotteryResp {
+  int64 id = 1; //抽奖ID
+}
+
+message UpdateLotteryReq {
+  int64 id = 1; //id
+  int64 userId = 2; //发起抽奖用户ID
+  string name = 3; //默认取一等奖名称
+  string thumb = 4; //默认取一等经配图
+  int64 publishTime = 5; //开奖时间
+  int64 joinNumber = 6; //自动开奖人数
+  string introduce = 7; //抽奖说明
+  int64 awardDeadline = 8; //领奖截止时间
+  int64 isSelected = 9; //是否精选 1是 0否
+  int64 announceType = 10;
+  int64 announceTime = 11;
+  int64 isAnnounced = 12;
+  int64 SponsorId = 13;
+}
+
+message UpdateLotteryResp {
+}
+
+message DelLotteryReq {
+  int64 id = 1; //id
+}
+
+message DelLotteryResp {
+}
+
+message GetLotteryByIdReq {
+  int64 id = 1; //id
+}
+
+message GetLotteryByIdResp {
+  Lottery lottery = 1; //lottery
+}
+
+message SearchLotteryReq {
+  int64 page = 1; //page
+  int64 limit = 2; //limit
+  int64 id = 3; //id
+  int64 userId = 4; //发起抽奖用户ID
+  string name = 5; //默认取一等奖名称
+  string thumb = 6; //默认取一等经配图
+  int64 publishTime = 7; // 发布抽奖时间
+  int64 joinNumber = 8; //自动开奖人数
+  string introduce = 9; //抽奖说明
+  int64 awardDeadline = 10; //领奖截止时间
+  int64 createTime = 11; //createTime
+  int64 updateTime = 12; //updateTime
+  int64 isSelected = 13; //是否精选 1是 0否
+  int64  lastId = 14; // 页面最后一条记录的id
+  int64 announceType = 15;
+  int64 announceTime = 16;
+  int64 isAnnounced = 17;
+  int64 SponsorId = 18;// 赞助商id
+}
+
+message SearchLotteryResp {
+  repeated Lottery lottery = 1; //lottery
+}
+
+message SetIsSelectedLotteryReq {
+  int64 userId = 1; // 要进行设置的管理员Id
+  int64 id = 2; // 抽奖id
+}
+
+message SetIsSelectedLotteryResp {
+  int64 isSelected = 1; //是否精选 1是 0否
+}
+
+message LotteryDetailReq {
+  int64 Id = 1; // 抽奖id
+  int64 UserId = 2; // 当前用户id
+}
+
+message LotteryDetailResp {
+  Lottery lottery = 1; // 抽奖信息
+  repeated Prize prizes = 2; // 奖品列表
+  int64 isParticipated = 3; // 当前用户是否已经参与当前抽奖, 0否; 1是
+}
+
+message LotterySponsorReq {
+  int64 SponsorId = 1; // 赞助商id
+}
+
+message LotterySponsorResp {
+  int64 id = 1; //id
+  int64 userId = 2; //userId
+  int64 type = 3; //1微信号 2公众号 3小程序 4微信群 5视频号
+  int64 appletType = 4; //type=3时该字段才有意义，1小程序链接 2路径跳转 3二维码跳转
+  string name = 5; //名称
+  string desc = 6; //描述
+  string avatar = 7; //avatar
+  int64 isShow = 8; //1显示 2不显示
+  string qrCode = 9; //二维码图片地址, type=1 2 3&applet_type=3 4的时候启用
+  string inputA = 10; //type=5 applet_type=2 or applet_type=1 输入框A
+  string inputB = 11; //type=5 applet_type=2输入框B
+}
+
+message AnnounceLotteryReq {
+  int64 AnnounceType = 1;
+}
+
+message AnnounceLotteryResp {
+}
+
+message CheckUserCreatedLotteryReq {
+  int64 UserId = 1; // 用户id
+}
+
+message CheckUserCreatedLotteryResp {
+  int64 IsCreated = 1; // 用户是否发起过抽奖：0否; 1是
+}
+
+message CheckUserCreatedLotteryAndTodayReq {
+  int64 UserId = 1; // 用户id
+}
+
+message CheckUserCreatedLotteryAndTodayResp {
+  int64 Yes = 1; // 用户是否在今天之内发布并有超过五个人参加：0否; 1是
+}
+
+message CheckUserCreatedLotteryAndThisWeekReq {
+  int64 UserId = 1; // 用户id
+}
+
+message CheckUserCreatedLotteryAndThisWeekResp {
+  int64 Yes = 1; // 用户是否在这周之内发起并有超过十个人参加：0否; 1是
+}
+
+message GetLotteryListAfterLoginReq {
+  int64 UserId = 1; // 用户id
+  int64 LastId = 2; // 最后一条记录的id
+  int64 Page = 3; // 页码
+  int64 Size = 4; // 每页条数
+  int64 IsSelected = 5; // 是否精选 1是 0否
+}
+
+message GetLotteryListAfterLoginResp {
+  repeated Lottery list = 1; // 抽奖列表
+}
+
+// 获取当前用户参与抽奖总数、发起抽奖总数、中奖记录总数
+message GetLotteryStatisticReq {
+  int64 UserId = 1; // 用户id
+}
+
+message GetLotteryStatisticResp {
+  int64 ParticipationCount = 1; // 参与抽奖总数
+  int64 CreatedCount = 2; // 发起抽奖总数
+  int64 WonCount = 3; // 中奖记录总数
+}
+
+// 获取抽奖列表lastId
+message GetLotteryListLastIdReq {
+}
+
+message GetLotteryListLastIdResp {
+  int64 LastId = 1; // 最后一条记录的id
+}
+
+// 发布抽奖
+message PublishLotteryReq {
+  int64 LotteryId = 1; // 抽奖id
+}
+
+message PublishLotteryResp {
+}
+
+
+//--------------------------------奖品表--------------------------------
+message Prize {
+  int64 id = 1; //id
+  int64 lotteryId = 2; //抽奖ID
+  int64 type = 3; //奖品类型：1奖品 2优惠券 3兑换码 4商城 5微信红包封面 6红包
+  string name = 4; //奖品名称
+  int64 level = 5; //几等奖 默认1
+  string thumb = 6; //奖品图
+  int64 count = 7; //奖品份数
+  int64 grantType = 8; //奖品发放方式：1快递邮寄 2让中奖者联系我 3中奖者填写信息 4跳转到其他小程序
+  int64 createTime = 9; //createTime
+  int64 updateTime = 10; //updateTime
+}
+
+message AddPrizeReq {
+  int64 lotteryId = 1; //抽奖ID
+  int64 type = 2; //奖品类型：1奖品 2优惠券 3兑换码 4商城 5微信红包封面 6红包
+  string name = 3; //奖品名称
+  int64 level = 4; //几等奖 默认1
+  string thumb = 5; //奖品图
+  int64 count = 6; //奖品份数
+  int64 grantType = 7; //奖品发放方式：1快递邮寄 2让中奖者联系我 3中奖者填写信息 4跳转到其他小程序
+}
+
+message AddPrizeResp {
+}
+
+message UpdatePrizeReq {
+  int64 id = 1; //id
+  int64 lotteryId = 2; //抽奖ID
+  int64 type = 3; //奖品类型：1奖品 2优惠券 3兑换码 4商城 5微信红包封面 6红包
+  string name = 4; //奖品名称
+  int64 level = 5; //几等奖 默认1
+  string thumb = 6; //奖品图
+  int64 count = 7; //奖品份数
+  int64 grantType = 8; //奖品发放方式：1快递邮寄 2让中奖者联系我 3中奖者填写信息 4跳转到其他小程序
+}
+
+message UpdatePrizeResp {
+}
+
+message DelPrizeReq {
+  int64 id = 1; //id
+}
+
+message DelPrizeResp {
+}
+
+message GetPrizeByIdReq {
+  int64 id = 1; //id
+}
+
+message GetPrizeByIdResp {
+  Prize prize = 1; //prize
+}
+
+message SearchPrizeReq {
+  int64 page = 1; //page
+  int64 limit = 2; //limit
+  int64 lotteryId = 3; //抽奖ID
+}
+
+message SearchPrizeResp {
+  repeated Prize prize = 1; //prize
+}
+
+message CreatePrize {
+  int64 Type = 1;                                              //奖品类型：1奖品 2优惠券 3兑换码 4商城 5微信红包封面 6红包
+  bytes Name = 2;                                             //奖品名称
+  int64 Count = 3;                                         //奖品份数
+  bytes Thumb = 4;                                          //默认一等奖配图
+  int64 Level = 5;                                            //奖品等级 1一等奖 2二等奖 3三等奖，依次类推
+  int64 GrantType = 6;                                    //奖品发放方式：1快递邮寄 2让中奖者联系我 3中奖者填写信息 4跳转到其他小程序
+}
+
+message LotteryPrizes {
+  int64 lotteryId = 2; // 抽奖id
+  repeated Prize Prizes = 3; // 奖品列表
+  int64 ParticipationId = 4; // 参与id
+  int64 Time = 5; // 参与/创建/中奖时间
+}
+
+// 获取当前用户发起/参与/中奖的抽奖列表
+message GetLotteryPrizesListByUserIdReq {
+  int64 type = 1; // 1发起的 2参与的 3中奖的
+  int64 size = 2; // 每页条数
+  int64 userId = 3; // 当前用户id
+  int64 lastId = 4; // 最后一条记录的id
+  int64 isAnnounced = 5; // 是否已开奖 0否 1是
+}
+
+message GetLotteryPrizesListByUserIdResp {
+  repeated LotteryPrizes LotteryPrizes = 1; // 抽奖列表
+}
+
+//--------------------------------参与抽奖表--------------------------------
+
+message AddLotteryParticipationReq{
+  int64 userId = 1;
+  int64 lotteryId = 2;
+}
+
+message AddLotteryParticipationResp{
+  int64 id = 1;
+}
+
+message SearchLotteryParticipationReq{
+  int64 lotteryId = 1;
+  int64 pageIndex = 2;
+  int64 pageSize = 3;
+}
+
+message LotteryParticipation {
+  int64 id = 1;
+  int64 lotteryId = 2;
+  int64 userId = 3;
+  bool isWon = 4;
+  int64 prizeId = 5;
+}
+
+message SearchLotteryParticipationResp{
+  int64 count = 1;
+  repeated LotteryParticipation list = 2;
+}
+
+message GetPrizeListByLotteryIdReq {
+  int64 lotteryId = 1; //id
+}
+
+message GetPrizeListByLotteryIdResp {
+  repeated Prize prizes = 1; // 奖品列表
+}
+
+message GetParticipationUserIdsByLotteryIdReq {
+  int64 lotteryId = 1;
+}
+
+message GetParticipationUserIdsByLotteryIdResp {
+  repeated int64 userIds = 1;
+}
+
+message CheckIsParticipatedReq {
+  int64 LotteryId = 1; // 当前抽奖id
+  int64 UserId = 2; // 当前用户id
+}
+
+message CheckIsParticipatedResp {
+  int64 IsParticipated = 1; // 当前用户是否已经参与当前抽奖
+}
+
+message GetSelectedLotteryStatisticReq{
+  int64 userId = 1;
+}
+
+message GetSelectedLotteryStatisticResp{
+  int64 dayCount = 1;
+  int64 weekCount = 2;
+}
+
+message CheckSelectedLotteryParticipatedReq{
+  int64 userId = 1;
+}
+
+message CheckSelectedLotteryParticipatedResp{
+  int64 participated = 1;
+}
+
+message CheckUserIsWonReq{
+  int64 userId = 1;
+  int64 lotteryId = 2;
+}
+
+message CheckUserIsWonResp{
+  int64 isWon = 1;
+}
+
+// 获取当前用户中奖列表
+message GetWonListReq{
+  int64 userId = 1;
+  int64 lastId = 2;
+  int64 size = 4;
+}
+
+message WonList{
+  int64 id = 1;
+  int64 lotteryId = 2;
+  int64 userId = 3;
+  bool isWon = 4;
+  Prize prize = 5;
+}
+
+message GetWonListResp{
+  repeated WonList list = 1;
+
+}
+
+// 获取中奖记录总数/获取当前用户累计奖品数量
+message GetWonListCountReq{
+  int64 userId = 1;
+}
+
+message GetWonListCountResp{
+  int64 count = 1;
+}
+
+// 获取当前抽奖中奖者名单
+message GetWonListByLotteryIdReq{
+  int64 lotteryId = 1;
+}
+
+message UserInfo{
+  int64 id = 1;
+  bytes nickname = 2;
+  bytes avatar = 3;
+}
+
+message WonList2 {
+  Prize prize = 1;
+  int64 WinnerCount = 2;
+  repeated UserInfo users = 3;
+}
+
+message GetWonListByLotteryIdResp{
+  repeated WonList2 list = 1;
+}
+
+
+
+//--------------------------------打卡任务表--------------------------------
+message ClockTask {
+  int64 Type = 1;
+  int64 Seconds = 2;
+  int64 AppletType = 3;
+  string PageLink = 4;
+  string AppId = 5;
+  string PagePath = 6;
+  string Image = 7;
+  string VideoAccountId = 8;
+  string VideoId = 9;
+  string ArticleLink = 10;
+  string Copywriting = 11;
+  int64 ChanceType = 12;
+  int64 IncreaseMultiple = 13;
+
+}
+
+//--------------------------------打卡任务记录表--------------------------------
+message AddClockTaskRecordReq {
+  int64 LotteryId = 1;
+  int64 UserId = 2;
+  int64 ClockTaskId = 3;
+  int64 IncreaseMultiple = 4;
+}
+
+message AddClockTaskRecordResp {
+  int64 id = 1; //id
+}
+
+// ------------------------------------
+// Rpc Func
+// ------------------------------------
+
+service lottery{
+
+  //-----------------------抽奖表-----------------------
+  rpc AddLottery(AddLotteryReq) returns (AddLotteryResp);
+  rpc UpdateLottery(UpdateLotteryReq) returns (UpdateLotteryResp);
+  rpc DelLottery(DelLotteryReq) returns (DelLotteryResp);
+  rpc GetLotteryById(GetLotteryByIdReq) returns (GetLotteryByIdResp);
+  rpc SearchLottery(SearchLotteryReq) returns (SearchLotteryResp);
+  rpc SetIsSelectedLottery(SetIsSelectedLotteryReq) returns (SetIsSelectedLotteryResp);
+  rpc LotteryDetail(LotteryDetailReq) returns (LotteryDetailResp);
+  rpc LotterySponsor(LotterySponsorReq) returns (LotterySponsorResp);
+  rpc AnnounceLottery(AnnounceLotteryReq) returns (AnnounceLotteryResp);
+  rpc CheckUserCreatedLottery(CheckUserCreatedLotteryReq) returns (CheckUserCreatedLotteryResp);
+  rpc CheckUserCreatedLotteryAndToday(CheckUserCreatedLotteryAndTodayReq) returns (CheckUserCreatedLotteryAndTodayResp);
+  rpc CheckUserCreatedLotteryAndThisWeek(CheckUserCreatedLotteryAndThisWeekReq) returns (CheckUserCreatedLotteryAndThisWeekResp);
+  rpc GetLotteryListAfterLogin(GetLotteryListAfterLoginReq) returns (GetLotteryListAfterLoginResp);
+  rpc GetLotteryStatistic(GetLotteryStatisticReq) returns (GetLotteryStatisticResp);
+  rpc GetLotteryListLastId(GetLotteryListLastIdReq) returns (GetLotteryListLastIdResp);
+  rpc PublishLottery(PublishLotteryReq) returns (PublishLotteryResp);
+  rpc GetLotteryPrizesListByUserId(GetLotteryPrizesListByUserIdReq) returns (GetLotteryPrizesListByUserIdResp);
+  //-----------------------奖品表-----------------------
+  rpc AddPrize(AddPrizeReq) returns (AddPrizeResp);
+  rpc UpdatePrize(UpdatePrizeReq) returns (UpdatePrizeResp);
+  rpc DelPrize(DelPrizeReq) returns (DelPrizeResp);
+  rpc GetPrizeById(GetPrizeByIdReq) returns (GetPrizeByIdResp);
+  rpc SearchPrize(SearchPrizeReq) returns (SearchPrizeResp);
+  rpc GetPrizeListByLotteryId(GetPrizeListByLotteryIdReq) returns (GetPrizeListByLotteryIdResp);
+
+  //-----------------------参与抽奖-----------------------
+  rpc AddLotteryParticipation(AddLotteryParticipationReq) returns (AddLotteryParticipationResp);
+  rpc SearchLotteryParticipation(SearchLotteryParticipationReq) returns (SearchLotteryParticipationResp);
+  rpc GetParticipationUserIdsByLotteryId(GetParticipationUserIdsByLotteryIdReq) returns (GetParticipationUserIdsByLotteryIdResp);
+  rpc CheckIsParticipated(CheckIsParticipatedReq) returns (CheckIsParticipatedResp);
+  rpc GetSelectedLotteryStatistic(GetSelectedLotteryStatisticReq) returns (GetSelectedLotteryStatisticResp);
+  rpc CheckSelectedLotteryParticipated(CheckSelectedLotteryParticipatedReq) returns (CheckSelectedLotteryParticipatedResp);
+  rpc CheckUserIsWon(CheckUserIsWonReq) returns (CheckUserIsWonResp);
+  rpc GetWonList(GetWonListReq) returns (GetWonListResp);
+  rpc GetWonListCount(GetWonListCountReq) returns (GetWonListCountResp);
+  rpc GetWonListByLotteryId(GetWonListByLotteryIdReq) returns (GetWonListByLotteryIdResp);
+
+  //-----------------------完成打卡任务-----------------------
+  rpc AddClockTaskRecord(AddClockTaskRecordReq) returns (AddClockTaskRecordResp);
+}

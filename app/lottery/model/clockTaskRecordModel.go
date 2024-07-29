@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -23,8 +24,26 @@ type (
 )
 
 func (c *customClockTaskRecordModel) GetClockTaskRecordByLotteryIdAndUserIds(lotteryId int64, userIds []int64) ([]*ClockTaskRecord, error) {
-	//TODO implement me
-	panic("implement me")
+	if len(userIds) == 0 {
+		return nil, nil
+	}
+
+	// 将userIds转换为字符串
+	userIdsStr := ""
+	for i, userId := range userIds {
+		if i == 0 {
+			userIdsStr = fmt.Sprintf("%d", userId)
+		} else {
+			userIdsStr = fmt.Sprintf("%s,%d", userIdsStr, userId)
+		}
+	}
+	query := fmt.Sprintf("select %s from %s where lottery_id = ? and user_id in (%s)", clockTaskRecordRows, c.table, userIdsStr)
+	var records []*ClockTaskRecord
+	err := c.QueryRowsNoCache(&records, query, lotteryId)
+	if err != nil {
+		return nil, err
+	}
+	return records, nil
 }
 
 // NewClockTaskRecordModel returns a model for the database table.

@@ -27,6 +27,8 @@ var (
 
 	cacheLotteryLotteryParticipationIdPrefix              = "cache:lottery:lotteryParticipation:id:"
 	cacheLotteryLotteryParticipationLotteryIdUserIdPrefix = "cache:lottery:lotteryParticipation:lotteryId:userId:"
+	cacheGozeroLotteryParticipationIdPrefix              = "cache:gozero:lotteryParticipation:id:"
+	cacheGozeroLotteryParticipationLotteryIdUserIdPrefix = "cache:gozero:lotteryParticipation:lotteryId:userId:"
 )
 
 type (

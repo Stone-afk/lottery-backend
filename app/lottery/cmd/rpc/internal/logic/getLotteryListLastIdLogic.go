@@ -24,7 +24,9 @@ func NewGetLotteryListLastIdLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *GetLotteryListLastIdLogic) GetLotteryListLastId(in *pb.GetLotteryListLastIdReq) (*pb.GetLotteryListLastIdResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.GetLotteryListLastIdResp{}, nil
+	id, err := l.svcCtx.LotteryModel.GetLastId(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetLotteryListLastIdResp{LastId: id}, nil
 }

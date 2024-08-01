@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-
 	"looklook/app/lottery/cmd/rpc/internal/svc"
 	"looklook/app/lottery/cmd/rpc/pb"
 
@@ -24,7 +23,16 @@ func NewGetParticipationUserIdsByLotteryIdLogic(ctx context.Context, svcCtx *svc
 }
 
 func (l *GetParticipationUserIdsByLotteryIdLogic) GetParticipationUserIdsByLotteryId(in *pb.GetParticipationUserIdsByLotteryIdReq) (*pb.GetParticipationUserIdsByLotteryIdResp, error) {
-	// todo: add your logic here and delete this line
+	builder := l.svcCtx.LotteryParticipationModel.SelectBuilder().Where("lottery_id = ?", in.LotteryId)
+	list, err := l.svcCtx.LotteryParticipationModel.FindAll(l.ctx, builder, "")
+	if err != nil {
+		return nil, err
+	}
 
-	return &pb.GetParticipationUserIdsByLotteryIdResp{}, nil
+	resp := &pb.GetParticipationUserIdsByLotteryIdResp{}
+	for i := range list {
+		resp.UserIds = append(resp.UserIds, list[i].UserId)
+	}
+
+	return resp, nil
 }

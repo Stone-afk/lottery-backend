@@ -141,7 +141,7 @@ func (c *customLotteryParticipationModel) GetParticipatedLotteryIdsByUserId(ctx 
 	return resp, nil
 }
 
-// FindAllByUserId 获取当前用户所有参与+发起的抽奖信息/中奖的
+// FindAllByUserId 获取当前用户所有参与的抽奖信息
 func (c *customLotteryParticipationModel) FindAllByUserId(UserId, LastId, Size, IsAnnounced int64) ([]*Lottery2, error) {
 	var query string
 	var resp []*Lottery2
@@ -169,6 +169,7 @@ DESC LIMIT ?`)
 	return resp, nil
 }
 
+// FindWonListByUserId 获取当前用户所有参与的抽奖信息 (只包括中奖的)
 func (c *customLotteryParticipationModel) FindWonListByUserId(UserId, LastId, Size, IsAnnounced int64) ([]*Lottery3, error) {
 	query := fmt.Sprintf("SELECT l.id,lp.id as participation_id,lp.update_time as time FROM %s lp LEFT JOIN %s l ON lp.lottery_id = l.id WHERE lp.user_id = ? AND lp.is_won = 1 AND lp.id < ? AND l.is_announced = 1 ORDER BY id DESC LIMIT ?", c.table, "lottery")
 	var resp []*Lottery3

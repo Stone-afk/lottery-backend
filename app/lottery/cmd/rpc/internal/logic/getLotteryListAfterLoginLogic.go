@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"github.com/jinzhu/copier"
 
 	"looklook/app/lottery/cmd/rpc/internal/svc"
 	"looklook/app/lottery/cmd/rpc/pb"
@@ -24,7 +25,43 @@ func NewGetLotteryListAfterLoginLogic(ctx context.Context, svcCtx *svc.ServiceCo
 }
 
 func (l *GetLotteryListAfterLoginLogic) GetLotteryListAfterLogin(in *pb.GetLotteryListAfterLoginReq) (*pb.GetLotteryListAfterLoginResp, error) {
-	// todo: add your logic here and delete this line
+	// 获取当前用户参与过的抽奖
+	ParticipatedLotteryIds, err := l.svcCtx.LotteryParticipationModel.GetParticipatedLotteryIdsByUserId(l.ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
 
-	return &pb.GetLotteryListAfterLoginResp{}, nil
+	if in.LastId == 0 {
+		id, err := l.svcCtx.LotteryModel.GetLastId(l.ctx)
+		if err != nil {
+			return nil, err
+		}
+		in.LastId = id + 1
+	}
+
+	if ParticipatedLotteryIds == nil {
+		ParticipatedLotteryIds = []int64{}
+	}
+
+	list, err := l.svcCtx.LotteryModel.GetLotteryListAfterLogin(l.ctx, in.Size, in.IsSelected, in.LastId, ParticipatedLotteryIds)
+	if err != nil {
+		return nil, err
+	}
+	var resp []*pb.Lottery
+	if len(list) > 0 {
+		for _, lottery := range list {
+			var pbLottery pb.Lottery
+			_ = copier.Copy(&pbLottery, lottery)
+			pbLottery.PublishTime = lottery.PublishTime.Time.Unix()
+			pbLottery.AwardDeadline = lottery.AwardDeadline.Unix()
+			pbLottery.AnnounceType = lottery.AnnounceType
+			pbLottery.AnnounceTime = lottery.AnnounceTime.Unix()
+			pbLottery.IsAnnounced = lottery.IsAnnounced
+			resp = append(resp, &pbLottery)
+		}
+	}
+
+	return &pb.GetLotteryListAfterLoginResp{
+		List: resp,
+	}, nil
 }

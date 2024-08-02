@@ -2,6 +2,8 @@ package logic
 
 import (
 	"context"
+	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 
 	"looklook/app/lottery/cmd/rpc/internal/svc"
 	"looklook/app/lottery/cmd/rpc/pb"
@@ -24,7 +26,32 @@ func NewGetWonListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetWon
 }
 
 func (l *GetWonListLogic) GetWonList(in *pb.GetWonListReq) (*pb.GetWonListResp, error) {
-	// todo: add your logic here and delete this line
+	res, err := l.svcCtx.LotteryParticipationModel.GetWonListByUserId(l.ctx, in.UserId, in.Size, in.LastId)
+	if err != nil {
+		return nil, err
+	}
+	var list []*pb.WonList
+	for _, item := range res {
+		pbWonList := new(pb.WonList)
+		pbWonList.Id = item.Id
+		pbWonList.LotteryId = item.LotteryId
+		pbWonList.UserId = item.UserId
+		pbWonList.IsWon = true
+		prize, err := l.svcCtx.PrizeModel.FindOne(l.ctx, item.PrizeId)
+		if err != nil && err != sqlx.ErrNotFound {
+			return nil, err
+		}
+		pbWonList.Prize = new(pb.Prize)
+		if err != sqlx.ErrNotFound {
+			err = copier.Copy(pbWonList.Prize, prize)
+			if err != nil {
+				return nil, err
+			}
+		}
+		list = append(list, pbWonList)
+	}
 
-	return &pb.GetWonListResp{}, nil
+	return &pb.GetWonListResp{
+		List: list,
+	}, nil
 }

@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"looklook/common/constants"
 
 	"looklook/app/lottery/cmd/rpc/internal/svc"
 	"looklook/app/lottery/cmd/rpc/pb"
@@ -23,8 +24,25 @@ func NewGetLotteryStatisticLogic(ctx context.Context, svcCtx *svc.ServiceContext
 	}
 }
 
+// GetLotteryStatistic 抽奖记录总数、发起抽奖记录总数、中奖记录总数RPC
 func (l *GetLotteryStatisticLogic) GetLotteryStatistic(in *pb.GetLotteryStatisticReq) (*pb.GetLotteryStatisticResp, error) {
-	// todo: add your logic here and delete this line
+	// 从参与抽奖表中获取当前用户所有的抽奖记录
+	builder := l.svcCtx.LotteryParticipationModel.SelectBuilder().Where("user_id = ?", in.UserId)
+	ParticipationCount, err := l.svcCtx.LotteryParticipationModel.FindCount(l.ctx, builder, "id")
+	if err != nil {
+		return nil, err
+	}
+	// 从抽奖表获取当前用户发起的抽奖记录的总数
+	builder = l.svcCtx.LotteryModel.SelectBuilder().Where("user_id = ?", in.UserId)
+	CreatedCount, err := l.svcCtx.LotteryModel.FindCount(l.ctx, builder, "id")
 
-	return &pb.GetLotteryStatisticResp{}, nil
+	// 从参与抽奖表中获取当前用户所有的中奖记录总数
+	builder = l.svcCtx.LotteryParticipationModel.SelectBuilder().Where("user_id = ? and is_won = ?", in.UserId, constants.IsWon)
+	WonCount, err := l.svcCtx.LotteryParticipationModel.FindCount(l.ctx, builder, "id")
+
+	return &pb.GetLotteryStatisticResp{
+		ParticipationCount: ParticipationCount,
+		CreatedCount:       CreatedCount,
+		WonCount:           WonCount,
+	}, nil
 }

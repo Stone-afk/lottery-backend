@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"github.com/jinzhu/copier"
 
 	"looklook/app/lottery/cmd/rpc/internal/svc"
 	"looklook/app/lottery/cmd/rpc/pb"
@@ -24,7 +25,20 @@ func NewGetPrizeListByLotteryIdLogic(ctx context.Context, svcCtx *svc.ServiceCon
 }
 
 func (l *GetPrizeListByLotteryIdLogic) GetPrizeListByLotteryId(in *pb.GetPrizeListByLotteryIdReq) (*pb.GetPrizeListByLotteryIdResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.GetPrizeListByLotteryIdResp{}, nil
+	res, err := l.svcCtx.PrizeModel.FindByLotteryId(l.ctx, in.LotteryId)
+	if err != nil {
+		return nil, err
+	}
+	prizes := make([]*pb.Prize, 0)
+	for _, p := range res {
+		pbPrize := new(pb.Prize)
+		err := copier.Copy(pbPrize, p)
+		if err != nil {
+			return nil, err
+		}
+		prizes = append(prizes, pbPrize)
+	}
+	return &pb.GetPrizeListByLotteryIdResp{
+		Prizes: prizes,
+	}, nil
 }

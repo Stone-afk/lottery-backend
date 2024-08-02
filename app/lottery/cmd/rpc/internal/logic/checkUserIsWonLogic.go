@@ -24,7 +24,12 @@ func NewCheckUserIsWonLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ch
 }
 
 func (l *CheckUserIsWonLogic) CheckUserIsWon(in *pb.CheckUserIsWonReq) (*pb.CheckUserIsWonResp, error) {
-	// todo: add your logic here and delete this line
+	id, err := l.svcCtx.LotteryParticipationModel.CheckIsWonByUserIdAndLotteryId(l.ctx, in.LotteryId, in.UserId)
+	if err != nil {
+		return nil, err
+	}
 
-	return &pb.CheckUserIsWonResp{}, nil
+	return &pb.CheckUserIsWonResp{
+		IsWon: id,
+	}, nil
 }

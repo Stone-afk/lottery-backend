@@ -24,7 +24,12 @@ func NewGetWonListCountLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 }
 
 func (l *GetWonListCountLogic) GetWonListCount(in *pb.GetWonListCountReq) (*pb.GetWonListCountResp, error) {
-	// todo: add your logic here and delete this line
+	count, err := l.svcCtx.LotteryParticipationModel.GetWonListCountByUserId(l.ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
 
-	return &pb.GetWonListCountResp{}, nil
+	return &pb.GetWonListCountResp{
+		Count: count,
+	}, nil
 }

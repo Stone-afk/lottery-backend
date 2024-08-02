@@ -2,6 +2,8 @@ package lottery
 
 import (
 	"context"
+	"fmt"
+	"looklook/common/constants"
 
 	"looklook/app/lottery/cmd/api/internal/svc"
 	"looklook/app/lottery/cmd/api/internal/types"
@@ -24,7 +26,16 @@ func NewChanceTypeListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ch
 }
 
 func (l *ChanceTypeListLogic) ChanceTypeList(req *types.ChanceTypeListReq) (resp *types.ChanceTypeListResp, err error) {
-	// todo: add your logic here and delete this line
+	var ChanceTypeList []types.ChanceType
+	changeType := types.ChanceType{}
+	changeType.Type = constants.Random
+	changeType.Text = constants.RandomText
+	ChanceTypeList = append(ChanceTypeList, changeType)
 
-	return
+	for i := 1; i <= 10; i++ {
+		changeType.Type = constants.Appoint
+		changeType.Text = fmt.Sprintf(constants.AppointText, i)
+		ChanceTypeList = append(ChanceTypeList, changeType)
+	}
+	return &types.ChanceTypeListResp{List: ChanceTypeList}, nil
 }

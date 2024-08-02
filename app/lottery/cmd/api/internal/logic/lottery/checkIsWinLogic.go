@@ -2,6 +2,8 @@ package lottery
 
 import (
 	"context"
+	"looklook/app/lottery/cmd/rpc/lottery"
+	"looklook/common/ctxdata"
 
 	"looklook/app/lottery/cmd/api/internal/svc"
 	"looklook/app/lottery/cmd/api/internal/types"
@@ -24,7 +26,13 @@ func NewCheckIsWinLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckI
 }
 
 func (l *CheckIsWinLogic) CheckIsWin(req *types.CheckIsWinReq) (resp *types.CheckIsWinResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	userId := ctxdata.GetUidFromCtx(l.ctx)
+	isWon, err := l.svcCtx.LotteryRpc.CheckUserIsWon(l.ctx, &lottery.CheckUserIsWonReq{
+		UserId:    userId,
+		LotteryId: req.LotteryId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.CheckIsWinResp{IsWon: isWon.IsWon}, nil
 }

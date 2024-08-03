@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -23,8 +24,13 @@ type (
 )
 
 func (c *customNoticeSubscribePreferenceModel) Upsert(ctx context.Context, data *NoticeSubscribePreference) (sql.Result, error) {
-	//TODO implement me
-	panic("implement me")
+	noticeNoticeSubscribePreferenceIdKey := fmt.Sprintf("%s%v", cacheNoticeNoticeSubscribePreferenceIdPrefix, data.Id)
+	noticeNoticeSubscribePreferenceUserOpenidMsgTemplateIdKey := fmt.Sprintf("%s%v:%v", cacheNoticeNoticeSubscribePreferenceUserOpenidMsgTemplateIdPrefix, data.UserOpenid, data.MsgTemplateId)
+	ret, err := c.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?) ON DUPLICATE KEY UPDATE accept_count = ?", c.table, noticeSubscribePreferenceRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.UserOpenid, data.MsgTemplateId, data.AcceptCount, data.AcceptCount)
+	}, noticeNoticeSubscribePreferenceIdKey, noticeNoticeSubscribePreferenceUserOpenidMsgTemplateIdKey)
+	return ret, err
 }
 
 // NewNoticeSubscribePreferenceModel returns a model for the database table.

@@ -2,6 +2,8 @@ package lottery
 
 import (
 	"context"
+	"looklook/app/lottery/cmd/rpc/lottery"
+	"looklook/common/ctxdata"
 
 	"looklook/app/lottery/cmd/api/internal/svc"
 	"looklook/app/lottery/cmd/api/internal/types"
@@ -24,7 +26,13 @@ func NewUpdateLotteryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 }
 
 func (l *UpdateLotteryLogic) UpdateLottery(req *types.UpdateLotteryReq) (resp *types.UpdateLotteryResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	userId := ctxdata.GetUidFromCtx(l.ctx)
+	_, err = l.svcCtx.LotteryRpc.UpdateLottery(l.ctx, &lottery.UpdateLotteryReq{
+		UserId: userId,
+		Id:     req.Id,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.UpdateLotteryResp{}, nil
 }

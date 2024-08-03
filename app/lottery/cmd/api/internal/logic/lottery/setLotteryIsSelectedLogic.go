@@ -2,6 +2,8 @@ package lottery
 
 import (
 	"context"
+	"looklook/app/lottery/cmd/rpc/lottery"
+	"looklook/common/ctxdata"
 
 	"looklook/app/lottery/cmd/api/internal/svc"
 	"looklook/app/lottery/cmd/api/internal/types"
@@ -24,7 +26,13 @@ func NewSetLotteryIsSelectedLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *SetLotteryIsSelectedLogic) SetLotteryIsSelected(req *types.SetLotteryIsSelectedReq) (resp *types.SetLotteryIsSelectedResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	uid := ctxdata.GetUidFromCtx(l.ctx)
+	selectedLottery, err := l.svcCtx.LotteryRpc.SetIsSelectedLottery(l.ctx, &lottery.SetIsSelectedLotteryReq{
+		Id:     req.Id,
+		UserId: uid,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.SetLotteryIsSelectedResp{IsSelected: selectedLottery.IsSelected}, nil
 }

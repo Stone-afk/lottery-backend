@@ -2,6 +2,9 @@ package lottery
 
 import (
 	"context"
+	"github.com/jinzhu/copier"
+	"looklook/app/lottery/cmd/rpc/lottery"
+	"looklook/common/ctxdata"
 
 	"looklook/app/lottery/cmd/api/internal/svc"
 	"looklook/app/lottery/cmd/api/internal/types"
@@ -24,7 +27,25 @@ func NewLotteryListAfterLoginLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *LotteryListAfterLoginLogic) LotteryListAfterLogin(req *types.LotteryListReq) (resp *types.LotteryListResp, err error) {
-	// todo: add your logic here and delete this line
+	userId := ctxdata.GetUidFromCtx(l.ctx)
+	res, err := l.svcCtx.LotteryRpc.GetLotteryListAfterLogin(l.ctx, &lottery.GetLotteryListAfterLoginReq{
+		LastId:     req.LastId,
+		Size:       req.PageSize,
+		IsSelected: req.IsSelected,
+		UserId:     userId,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	var LotteryList []types.Lottery
+	if len(res.List) > 0 {
+		for _, item := range res.List {
+			var t types.Lottery
+			_ = copier.Copy(&t, item)
+			LotteryList = append(LotteryList, t)
+		}
+	}
+
+	return &types.LotteryListResp{List: LotteryList}, nil
 }

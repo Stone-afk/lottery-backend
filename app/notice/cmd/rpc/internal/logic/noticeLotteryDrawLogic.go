@@ -34,7 +34,7 @@ func NewNoticeLotteryDrawLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
-// NoticeLotteryDraw 发送开奖消息
+// NoticeLotteryDraw 开奖结果通知
 func (l *NoticeLotteryDrawLogic) NoticeLotteryDraw(in *pb.NoticeLotteryDrawReq) (*pb.NoticeLotteryDrawResp, error) {
 	// 获取抽奖信息
 	rpcLotteryInfo, err := l.svcCtx.LotteryRpc.GetLotteryById(l.ctx, &lottery.GetLotteryByIdReq{

@@ -111,7 +111,7 @@ func (l *WxMiniProgramNotifyUserHandler) ProcessTask(ctx context.Context, t *asy
 		logx.Error("WxMiniProgramNotifyUserHandler ProcessTask payload data invalid",
 			logx.Field("payload", p))
 	}
-	// 判断用户是否允许接收订阅消息
+	// 获取用户消息订阅偏好设置，判断用户是否允许接收订阅消息
 	preference, err := l.svcCtx.NoticeRpc.GetNoticeSubscribePreference(ctx, &pb.GetNoticeSubscribePreferenceReq{
 		Openid:     p.OpenId,
 		TemplateId: templateId,
@@ -160,7 +160,7 @@ func (l *WxMiniProgramNotifyUserHandler) ProcessTask(ctx context.Context, t *asy
 			return errors.Wrapf(ErrNotifyUserFail, "WxMiniProgramNotifyUserHandler send message fail, errCode:%v, errMsg: %v, reqData:%+v", resp.ErrCode, resp.ErrMsg, reqData)
 		}
 	}
-
+	//  保存用户消息订阅偏好设置
 	_, err = l.svcCtx.NoticeRpc.SaveNoticeSubscribePreference(ctx, &pb.SaveNoticeSubscribePreferenceReq{
 		Openid:     p.OpenId,
 		TemplateId: templateId,

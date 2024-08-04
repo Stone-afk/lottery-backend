@@ -29,7 +29,7 @@ func NewSaveNoticeSubscribePreferenceLogic(ctx context.Context, svcCtx *svc.Serv
 	}
 }
 
-// SaveNoticeSubscribePreference 保存用户消息订阅偏好设置
+// SaveNoticeSubscribePreference 保存/更新用户消息订阅偏好设置
 func (l *SaveNoticeSubscribePreferenceLogic) SaveNoticeSubscribePreference(in *pb.SaveNoticeSubscribePreferenceReq) (*pb.SaveNoticeSubscribePreferenceResp, error) {
 	subscribePreference, err := l.svcCtx.NoticeSubscribePreferenceModel.FindOneByUserOpenidMsgTemplateId(l.ctx, in.Openid, in.TemplateId)
 	if err != nil && !errors.Is(err, model.ErrNotFound) {

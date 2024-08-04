@@ -23,6 +23,7 @@ func NewNoticeWishSignLogic(ctx context.Context, svcCtx *svc.ServiceContext) *No
 	}
 }
 
+// NoticeWishSign 发送签到开始消息
 func (l *NoticeWishSignLogic) NoticeWishSign(in *pb.NoticeWishSignInReq) (*pb.NoticeWishSignInResp, error) {
 	// todo: add your logic here and delete this line
 

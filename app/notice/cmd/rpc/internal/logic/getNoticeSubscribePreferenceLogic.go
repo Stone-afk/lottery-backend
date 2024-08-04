@@ -28,6 +28,7 @@ func NewGetNoticeSubscribePreferenceLogic(ctx context.Context, svcCtx *svc.Servi
 	}
 }
 
+// GetNoticeSubscribePreference 获取用户消息订阅偏好设置
 func (l *GetNoticeSubscribePreferenceLogic) GetNoticeSubscribePreference(in *pb.GetNoticeSubscribePreferenceReq) (*pb.GetNoticeSubscribePreferenceResp, error) {
 	subscribePreference, err := l.svcCtx.NoticeSubscribePreferenceModel.FindOneByUserOpenidMsgTemplateId(l.ctx, in.Openid, in.TemplateId)
 	if errors.Is(err, model.ErrNotFound) {

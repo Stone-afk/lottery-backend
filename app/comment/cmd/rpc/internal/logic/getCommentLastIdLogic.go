@@ -24,7 +24,11 @@ func NewGetCommentLastIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *GetCommentLastIdLogic) GetCommentLastId(in *pb.GetCommentLastIdReq) (*pb.GetCommentLastIdResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.GetCommentLastIdResp{}, nil
+	id, err := l.svcCtx.CommentModel.GetCommentLastId()
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetCommentLastIdResp{
+		LastId: id,
+	}, nil
 }

@@ -24,7 +24,9 @@ func NewIsPraiseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *IsPraise
 }
 
 func (l *IsPraiseLogic) IsPraise(in *pb.IsPraiseReq) (*pb.IsPraiseResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.IsPraiseResp{}, nil
+	PraiseId, err := l.svcCtx.PraiseModel.IsPraise(l.ctx, in.CommentId, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.IsPraiseResp{PraiseId: PraiseId}, nil
 }

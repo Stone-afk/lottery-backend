@@ -2,6 +2,10 @@ package comment
 
 import (
 	"context"
+	"looklook/app/comment/cmd/rpc/comment"
+	"looklook/app/lottery/cmd/rpc/lottery"
+	"looklook/common/ctxdata"
+	"looklook/common/xerr"
 
 	"looklook/app/comment/cmd/api/internal/svc"
 	"looklook/app/comment/cmd/api/internal/types"
@@ -24,7 +28,30 @@ func NewAddCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddCom
 }
 
 func (l *AddCommentLogic) AddComment(req *types.CommentAddReq) (resp *types.CommentAddResp, err error) {
-	// todo: add your logic here and delete this line
+	userId := ctxdata.GetUidFromCtx(l.ctx)
+	// 如果用户没有中奖，不允许评论
+	isWon, err := l.svcCtx.LotteryRpc.CheckUserIsWon(l.ctx, &lottery.CheckUserIsWonReq{
+		LotteryId: req.LotteryId,
+		UserId:    userId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	// 判断是否中奖
+	if isWon.IsWon == 0 {
+		return nil, xerr.NewErrCode(xerr.ErrUserNotWon)
+	}
 
-	return
+	_, err = l.svcCtx.CommentRpc.AddComment(l.ctx, &comment.AddCommentReq{
+		UserId:      userId,
+		LotteryId:   req.LotteryId,
+		PrizeName:   req.PrizeName,
+		Content:     req.Content,
+		Pics:        req.Pics,
+		PraiseCount: 0,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.CommentAddResp{}, nil
 }

@@ -2,6 +2,7 @@ package comment
 
 import (
 	"context"
+	"looklook/app/comment/cmd/rpc/comment"
 
 	"looklook/app/comment/cmd/api/internal/svc"
 	"looklook/app/comment/cmd/api/internal/types"
@@ -24,7 +25,12 @@ func NewGetCommentLastIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *GetCommentLastIdLogic) GetCommentLastId(req *types.GetCommentLastIdReq) (resp *types.GetCommentLastIdResp, err error) {
-	// todo: add your logic here and delete this line
+	id, err := l.svcCtx.CommentRpc.GetCommentLastId(l.ctx, &comment.GetCommentLastIdReq{})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	return &types.GetCommentLastIdResp{
+		LastId: id.LastId,
+	}, nil
 }

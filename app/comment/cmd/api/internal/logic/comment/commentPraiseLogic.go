@@ -2,6 +2,8 @@ package comment
 
 import (
 	"context"
+	"looklook/app/comment/cmd/rpc/comment"
+	"looklook/common/ctxdata"
 
 	"looklook/app/comment/cmd/api/internal/svc"
 	"looklook/app/comment/cmd/api/internal/types"
@@ -24,7 +26,14 @@ func NewCommentPraiseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Com
 }
 
 func (l *CommentPraiseLogic) CommentPraise(req *types.CommentPraiseReq) (resp *types.CommentPraiseResp, err error) {
-	// todo: add your logic here and delete this line
+	userId := ctxdata.GetUidFromCtx(l.ctx)
+	_, err = l.svcCtx.CommentRpc.PraiseComment(l.ctx, &comment.PraiseCommentReq{
+		UserId:    userId,
+		CommentId: req.Id,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	return &types.CommentPraiseResp{}, err
 }

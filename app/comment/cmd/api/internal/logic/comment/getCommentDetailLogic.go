@@ -2,6 +2,8 @@ package comment
 
 import (
 	"context"
+	"github.com/jinzhu/copier"
+	"looklook/app/comment/cmd/rpc/comment"
 
 	"looklook/app/comment/cmd/api/internal/svc"
 	"looklook/app/comment/cmd/api/internal/types"
@@ -24,7 +26,19 @@ func NewGetCommentDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *GetCommentDetailLogic) GetCommentDetail(req *types.CommentDetailReq) (resp *types.CommentDetailResp, err error) {
-	// todo: add your logic here and delete this line
+	res, err := l.svcCtx.CommentRpc.GetCommentById(l.ctx, &comment.GetCommentByIdReq{
+		Id: req.Id,
+	})
+	if err != nil {
+		return nil, err
+	}
+	commentDetail := new(types.Comment)
+	err = copier.Copy(commentDetail, &res.Comment)
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	return &types.CommentDetailResp{
+		Comment: *commentDetail,
+	}, nil
 }

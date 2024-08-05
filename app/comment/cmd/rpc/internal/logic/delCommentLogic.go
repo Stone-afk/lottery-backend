@@ -2,6 +2,8 @@ package logic
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	"looklook/common/xerr"
 
 	"looklook/app/comment/cmd/rpc/internal/svc"
 	"looklook/app/comment/cmd/rpc/pb"
@@ -24,7 +26,16 @@ func NewDelCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DelCom
 }
 
 func (l *DelCommentLogic) DelComment(in *pb.DelCommentReq) (*pb.DelCommentResp, error) {
-	// todo: add your logic here and delete this line
+	// 删除评论
+	//err := l.svcCtx.CommentModel.Delete(l.ctx, in.Id)
+	data, err := l.svcCtx.CommentModel.FindOne(l.ctx, in.Id)
+	if err != nil {
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_FINDCOMMENT_ERROR), "comment Database Exception commentId : %d , err: %v", in.Id, err)
+	}
+	err = l.svcCtx.CommentModel.DeleteSoft(l.ctx, data)
+	if err != nil {
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_DELETECOMMENT_ERROR), "comment Database Exception commentId : %d , err: %v", in.Id, err)
+	}
 
 	return &pb.DelCommentResp{}, nil
 }

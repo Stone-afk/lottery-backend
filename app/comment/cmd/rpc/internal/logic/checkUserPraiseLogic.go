@@ -23,9 +23,15 @@ func NewCheckUserPraiseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *C
 	}
 }
 
-// -----------------------others-----------------------
+// CheckUserPraise -----------------------others-----------------------
 func (l *CheckUserPraiseLogic) CheckUserPraise(in *pb.CheckUserPraiseReq) (*pb.CheckUserPraiseResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.CheckUserPraiseResp{}, nil
+	today, err := l.svcCtx.PraiseModel.IsPraiseThisWeek(l.ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	if today {
+		return &pb.CheckUserPraiseResp{IsPraise: 1}, nil
+	} else {
+		return &pb.CheckUserPraiseResp{IsPraise: 0}, nil
+	}
 }

@@ -2,6 +2,9 @@ package logic
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	"looklook/app/comment/model"
+	"looklook/common/xerr"
 
 	"looklook/app/comment/cmd/rpc/internal/svc"
 	"looklook/app/comment/cmd/rpc/pb"
@@ -23,9 +26,16 @@ func NewAddPraiseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddPrai
 	}
 }
 
-// -----------------------praise-----------------------
+// AddPraise -----------------------praise-----------------------
 func (l *AddPraiseLogic) AddPraise(in *pb.AddPraiseReq) (*pb.AddPraiseResp, error) {
-	// todo: add your logic here and delete this line
+	praise := new(model.Praise)
+	praise.CommentId = in.CommentId
+	praise.UserId = in.UserId
+
+	_, err := l.svcCtx.PraiseModel.Insert(l.ctx, praise)
+	if err != nil {
+		return &pb.AddPraiseResp{}, errors.Wrapf(xerr.NewErrCode(xerr.DB_INSERTPRAISE_ERROR), "praise Database Exception praise : %+v , err: %v", praise, err)
+	}
 
 	return &pb.AddPraiseResp{}, nil
 }

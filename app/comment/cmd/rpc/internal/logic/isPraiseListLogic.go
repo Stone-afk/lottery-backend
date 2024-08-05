@@ -24,7 +24,16 @@ func NewIsPraiseListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *IsPr
 }
 
 func (l *IsPraiseListLogic) IsPraiseList(in *pb.IsPraiseListReq) (*pb.IsPraiseListResp, error) {
-	// todo: add your logic here and delete this line
+	list, err := l.svcCtx.PraiseModel.IsPraiseList(l.ctx, in.CommentId, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	//ids := make([]int64, 0, len(list))
+	//for _, v := range list {
+	//	ids = append(ids, v)
+	//}
 
-	return &pb.IsPraiseListResp{}, nil
+	return &pb.IsPraiseListResp{
+		PraiseId: list,
+	}, nil
 }

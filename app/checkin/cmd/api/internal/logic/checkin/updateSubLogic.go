@@ -1,0 +1,30 @@
+package checkin
+
+import (
+	"context"
+
+	"looklook/app/checkin/cmd/api/internal/svc"
+	"looklook/app/checkin/cmd/api/internal/types"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type UpdateSubLogic struct {
+	logx.Logger
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+}
+
+func NewUpdateSubLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateSubLogic {
+	return &UpdateSubLogic{
+		Logger: logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+	}
+}
+
+func (l *UpdateSubLogic) UpdateSub(req *types.UpdateSubReq) (resp *types.UpdateSubResp, err error) {
+	// todo: add your logic here and delete this line
+
+	return
+}

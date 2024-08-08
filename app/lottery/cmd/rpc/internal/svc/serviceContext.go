@@ -24,7 +24,11 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
-		Config:                    c,
+		Config: c,
+		RedisClient: redis.New(c.Redis.Host, func(r *redis.Redis) {
+			r.Type = c.Redis.Type
+			r.Pass = c.Redis.Pass
+		}),
 		UserCenterRpc:             usercenter.NewUsercenter(zrpc.MustNewClient(c.UserCenterRpcConf)),
 		NoticeRpc:                 notice.NewNotice(zrpc.MustNewClient(c.NoticeRpcConf)),
 		LotteryModel:              model.NewLotteryModel(sqlx.NewMysql(c.DB.DataSource), c.Cache),

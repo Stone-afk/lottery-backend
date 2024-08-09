@@ -3,8 +3,6 @@ package event
 import (
 	"net/http"
 
-	"looklook/common/result"
-
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"looklook/app/notice/cmd/api/internal/logic/event"
 	"looklook/app/notice/cmd/api/internal/svc"
@@ -19,15 +17,12 @@ func VerifyEventHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		validateErr := translator.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(r, w, validateErr)
-			return
-		}
-
 		l := event.NewVerifyEventLogic(r.Context(), svcCtx)
-		resp, err := l.VerifyEvent(&req)
-
-		result.HttpResult(r, w, resp, err)
+		resp, err := l.VerifyEvent(&req, w)
+		if err != nil {
+			httpx.ErrorCtx(r.Context(), w, err)
+		} else {
+			httpx.OkJsonCtx(r.Context(), w, resp)
+		}
 	}
 }

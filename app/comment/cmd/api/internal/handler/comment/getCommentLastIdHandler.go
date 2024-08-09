@@ -1,6 +1,7 @@
 package comment
 
 import (
+	"looklook/app/comment/cmd/api/internal/handler/translator"
 	"net/http"
 
 	"looklook/common/result"

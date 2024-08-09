@@ -1,6 +1,7 @@
 package lottery
 
 import (
+	"looklook/app/lottery/cmd/api/internal/handler/translator"
 	"net/http"
 
 	"looklook/common/result"

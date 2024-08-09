@@ -19,12 +19,6 @@ func CreateClockTaskRecordHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		validateErr := translator.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(r, w, validateErr)
-			return
-		}
-
 		l := lottery.NewCreateClockTaskRecordLogic(r.Context(), svcCtx)
 		resp, err := l.CreateClockTaskRecord(&req)
 

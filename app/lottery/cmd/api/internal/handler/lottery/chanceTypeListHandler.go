@@ -19,12 +19,6 @@ func ChanceTypeListHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		validateErr := translator.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(r, w, validateErr)
-			return
-		}
-
 		l := lottery.NewChanceTypeListLogic(r.Context(), svcCtx)
 		resp, err := l.ChanceTypeList(&req)
 

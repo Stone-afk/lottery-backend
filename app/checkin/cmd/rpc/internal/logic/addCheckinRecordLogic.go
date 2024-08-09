@@ -23,7 +23,7 @@ func NewAddCheckinRecordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-// -----------------------checkinRecord--------------------
+// AddCheckinRecord -----------------------checkinRecord--------------------
 func (l *AddCheckinRecordLogic) AddCheckinRecord(in *pb.AddCheckinRecordReq) (*pb.AddCheckinRecordResp, error) {
 	// todo: add your logic here and delete this line
 

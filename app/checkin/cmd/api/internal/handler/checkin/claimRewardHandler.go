@@ -1,6 +1,7 @@
 package checkin
 
 import (
+	"looklook/app/checkin/cmd/api/internal/handler/translator"
 	"net/http"
 
 	"looklook/common/result"

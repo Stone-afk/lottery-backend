@@ -2,6 +2,8 @@ package checkin
 
 import (
 	"context"
+	"looklook/app/checkin/cmd/rpc/checkin"
+	"looklook/common/ctxdata"
 
 	"looklook/app/checkin/cmd/api/internal/svc"
 	"looklook/app/checkin/cmd/api/internal/types"
@@ -24,7 +26,18 @@ func NewGetCheckinLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetChe
 }
 
 func (l *GetCheckinLogic) GetCheckin(req *types.GetCheckinReq) (resp *types.GetCheckinResp, err error) {
-	// todo: add your logic here and delete this line
+	userId := ctxdata.GetUidFromCtx(l.ctx)
+	record, err := l.svcCtx.CheckinRpc.GetCheckinRecordByUserId(l.ctx, &checkin.GetCheckinRecordByUserIdReq{
+		UserId: userId,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	return &types.GetCheckinResp{
+		ContinuousCheckinDays: record.ContinuousCheckinDays,
+		State:                 record.State,
+		Integral:              record.Integral,
+		SubStatus:             record.SubStatus,
+	}, nil
 }

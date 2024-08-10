@@ -2,6 +2,8 @@ package checkin
 
 import (
 	"context"
+	"looklook/app/checkin/cmd/rpc/checkin"
+	"looklook/common/ctxdata"
 
 	"looklook/app/checkin/cmd/api/internal/svc"
 	"looklook/app/checkin/cmd/api/internal/types"
@@ -23,8 +25,15 @@ func NewClaimRewardLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Claim
 	}
 }
 
-func (l *ClaimRewardLogic) ClaimReward(req *types.ClaimRewardReq) (resp *types.ClaimRewardResp, err error) {
-	// todo: add your logic here and delete this line
+func (l *ClaimRewardLogic) ClaimReward(req *types.ClaimRewardReq) (*types.ClaimRewardResp, error) {
+	userId := ctxdata.GetUidFromCtx(l.ctx)
+	_, err := l.svcCtx.CheckinRpc.UpdateTaskRecord(l.ctx, &checkin.UpdateTaskRecordReq{
+		UserId: userId,
+		TaskId: req.TaskId,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	return &types.ClaimRewardResp{}, nil
 }

@@ -2,6 +2,11 @@ package logic
 
 import (
 	"context"
+	"fmt"
+	"github.com/jinzhu/copier"
+	"github.com/pkg/errors"
+	"looklook/app/shop/model"
+	"looklook/common/xerr"
 
 	"looklook/app/shop/cmd/rpc/internal/svc"
 	"looklook/app/shop/cmd/rpc/pb"
@@ -24,7 +29,13 @@ func NewGetGoodsByIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetG
 }
 
 func (l *GetGoodsByIdLogic) GetGoodsById(in *pb.GoodsReq) (*pb.GoodsResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.GoodsResp{}, nil
+	goods, err := l.svcCtx.GoodsModel.FindOne(l.ctx, in.Id)
+	if err != nil && !errors.Is(err, model.ErrNotFound) {
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DB_ERROR), "id:%d,err:%v", in.Id, err)
+	}
+	fmt.Println("商品信息为: ", goods)
+	pbGoods := new(pb.Goods)
+	_ = copier.Copy(pbGoods, goods)
+	fmt.Println("pbGoods:", pbGoods)
+	return (*pb.GoodsResp)(pbGoods), nil
 }

@@ -132,3 +132,16 @@ CREATE TABLE `clock_task_record` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='打卡任务记录表';
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+DROP TABLE IF EXISTS `award_record`;
+CREATE TABLE `award_record` (
+                                     `id` int NOT NULL AUTO_INCREMENT,
+                                     `lottery_id` int NOT NULL COMMENT '抽奖ID',
+                                     `user_id` int NOT NULL COMMENT '用户id',
+                                     `prize_id`   BIGINT  NOT NULL COMMENT '奖品id',
+                                     `del_state` tinyint NOT NULL DEFAULT '0',
+                                     `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                     `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                     PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='领取奖品记录表';
+SET FOREIGN_KEY_CHECKS = 1;

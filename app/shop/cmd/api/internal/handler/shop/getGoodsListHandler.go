@@ -1,6 +1,7 @@
 package shop
 
 import (
+	"looklook/app/shop/cmd/api/internal/handler/translator"
 	"net/http"
 
 	"looklook/common/result"

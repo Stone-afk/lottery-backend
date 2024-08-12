@@ -1,6 +1,7 @@
 package vote
 
 import (
+	"looklook/app/vote/cmd/api/internal/handler/translator"
 	"net/http"
 
 	"looklook/common/result"

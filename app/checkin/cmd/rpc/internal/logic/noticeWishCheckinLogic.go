@@ -25,7 +25,7 @@ func NewNoticeWishCheckinLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
-// -----------------------others----------------------
+// NoticeWishCheckin -----------------------others----------------------
 func (l *NoticeWishCheckinLogic) NoticeWishCheckin(in *pb.NoticeWishCheckinReq) (*pb.NoticeWishCheckinResp, error) {
 	userIds, err := l.svcCtx.TaskProgressModel.FindAllSubId(l.ctx)
 	if err != nil {

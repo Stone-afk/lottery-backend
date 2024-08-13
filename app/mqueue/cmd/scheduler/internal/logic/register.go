@@ -19,7 +19,7 @@ func NewCronScheduler(ctx context.Context, svcCtx *svc.ServiceContext) *MqueueSc
 
 func (l *MqueueScheduler) Register() {
 	// looklook
-	// l.settleRecordScheduler()
+	l.settleRecordScheduler()
 
 	// lottery
 	l.LotteryDrawScheduler()

@@ -58,7 +58,7 @@ func (l *AnnounceLotteryLogic) AnnounceLottery(in *pb.AnnounceLotteryReq) (*pb.A
 			CurrentTime:          time.Now(),
 		}
 	case constants.AnnounceTypePeopleLottery:
-		// 开奖时间类型
+		// 开奖人数类型
 		strategy = &PeopleLotteryStrategy{
 			AnnounceLotteryLogic: l,
 			CurrentTime:          time.Now(),
